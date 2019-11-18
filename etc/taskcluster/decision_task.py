@@ -628,7 +628,7 @@ def macos_release_build_with_debug_assertions(priority=None):
 
 
 def macos_wpt():
-    priority = "high" if CONFIG.git_ref == "refs/heads/auto" else None
+    priority = "high" if CONFIG.git_ref == "refs/heads/try-wpt-mac" else None
     build_task = macos_release_build_with_debug_assertions(priority=priority)
     def macos_run_task(name):
         task = macos_task(name).with_python2()
