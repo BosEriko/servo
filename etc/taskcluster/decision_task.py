@@ -47,6 +47,7 @@ def main(task_for):
             "try": all_tests,
             "try-taskcluster": [
                 # Add functions here as needed, in your push to that branch
+                macos_wpt,
             ],
             "master": [
                 upload_docs,
@@ -587,8 +588,8 @@ def update_wpt():
     )
     return (
         with_homebrew(update_task, [
-            "etc/taskcluster/macos/Brewfile-wpt",
-            "etc/taskcluster/macos/Brewfile-gstreamer",
+            "etc/taskcluster/macos/Brewfile-wpt-update",
+            "etc/taskcluster/macos/Brewfile",
         ])
         # Pushing the new changes to the git remote requires a full repo clone.
         .with_repo(shallow=False, alternate_object_dir="/var/cache/servo.git/objects")
@@ -625,10 +626,11 @@ def macos_release_build_with_debug_assertions(priority=None):
 
 def macos_wpt():
     priority = "high" if CONFIG.git_ref == "refs/heads/auto" else None
-    build_task = macos_release_build_with_debug_assertions(priority=priority)
+#    build_task = macos_release_build_with_debug_assertions(priority=priority)
+    build_task = "VudTMpVSQ5qLOKK2ao0aIw"
     def macos_run_task(name):
         task = macos_task(name).with_python2()
-        return with_homebrew(task, ["etc/taskcluster/macos/Brewfile-gstreamer"])
+        return with_homebrew(task, ["etc/taskcluster/macos/Brewfile"])
     wpt_chunks(
         "macOS x64",
         macos_run_task,
@@ -636,6 +638,7 @@ def macos_wpt():
         repo_dir="repo",
         repo_kwargs=dict(alternate_object_dir="/var/cache/servo.git/objects"),
         total_chunks=30,
+        chunks=[1, 2, 3],
         processes=4,
     )
 
@@ -909,7 +912,7 @@ def macos_build_task(name):
     return (
         with_homebrew(build_task, [
             "etc/taskcluster/macos/Brewfile",
-            "etc/taskcluster/macos/Brewfile-gstreamer",
+            "etc/taskcluster/macos/Brewfile-build",
         ])
         .with_script("""
             export OPENSSL_INCLUDE_DIR="$(brew --prefix openssl)/include"
@@ -999,7 +1002,7 @@ CONFIG.default_provisioner_id = "proj-servo"
 CONFIG.docker_image_build_worker_type = "docker"
 
 CONFIG.windows_worker_type = "win2016"
-CONFIG.macos_worker_type = "macos"
+CONFIG.macos_worker_type = "macos-disabled-mac-i7"
 
 if __name__ == "__main__":  # pragma: no cover
     main(task_for=os.environ["TASK_FOR"])
