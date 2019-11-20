@@ -199,6 +199,7 @@ def linux_tidy_unit():
             ./mach build --dev --features canvas2d-raqote
             ./mach build --dev --features layout-2020
             ./mach build --dev --libsimpleservo
+            ./mach build --dev -p servo-gst-plugin
             ./mach test-tidy --no-progress --self-test
 
             ./etc/memory_reports_over_time.py --test
@@ -471,6 +472,8 @@ def windows_unit(worker_type=None, cached=True):
             "mach smoketest --angle",
             "mach package --dev",
             "mach build --dev --libsimpleservo",
+            "mach build --dev -p servo-gst-plugin",
+
         )
         .with_artifacts("repo/target/debug/msi/Servo.exe",
                         "repo/target/debug/msi/Servo.zip")
